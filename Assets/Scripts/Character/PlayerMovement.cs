@@ -27,7 +27,7 @@ public class PlayerMovement : MonoBehaviour
     /// <summary>
     /// 处理玩家移动输入
     /// </summary>
-    public void onMove(InputAction.CallbackContext context)
+    public void OnMove(InputAction.CallbackContext context)
     {
         InputVector = context.ReadValue<Vector2>();
     }

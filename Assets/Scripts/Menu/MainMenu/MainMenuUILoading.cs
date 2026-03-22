@@ -73,8 +73,6 @@ public class MainMenuUILoading : MonoBehaviour
             // 动画播放完毕后，开放鼠标点击，并彻底隐藏黑幕以优化性能
             fadeOverlay.blocksRaycasts = false;
             fadeOverlay.gameObject.SetActive(false);
-            
-            Debug.Log("菜单砸地动画播放完毕！");
         });
     }
     private float CustomScaledBounce(float time, float duration, float overshootOrAmplitude, float period)
