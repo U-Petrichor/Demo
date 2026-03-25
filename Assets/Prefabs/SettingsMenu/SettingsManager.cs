@@ -7,11 +7,11 @@ public class SettingsManager : MonoBehaviour
 {
     // 【架构核心】单例模式，方便全宇宙的脚本呼唤它
     public static SettingsManager Instance { get; private set; }
-    private GameObject settingsPanel;
-    private GameObject LanguagePanel;
-    private GameObject ControlPanel;
-    private GameObject AudioPanel;
-    private GameObject GraphicPanel;
+    private GameObject _settingsPanel;
+    private GameObject _languagePanel;
+    private GameObject _controlsPanel;
+    private GameObject _audioPanel;
+    private GameObject _graphicsPanel;
 
     private TMP_Dropdown languageDropdown;
 
@@ -27,31 +27,31 @@ public class SettingsManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(this.gameObject);
 
-        settingsPanel = transform.Find("SettingsPanel").gameObject;
+        _settingsPanel = transform.Find("SettingsPanel").gameObject;
 
-        Transform Settings = settingsPanel.transform.Find("Settings");
-        LanguagePanel = Settings.Find("LanguagePanel").gameObject;
-        ControlPanel = Settings.Find("ControlPanel").gameObject;
-        AudioPanel = Settings.Find("AudioPanel").gameObject;
-        GraphicPanel = Settings.Find("GraphicPanel").gameObject;
+        Transform Settings = _settingsPanel.transform.Find("Settings");
+        _languagePanel = Settings.Find("LanguagePanel").gameObject;
+        _controlsPanel = Settings.Find("ControlsPanel").gameObject;
+        _audioPanel = Settings.Find("AudioPanel").gameObject;
+        _graphicsPanel = Settings.Find("GraphicsPanel").gameObject;
 
-        Transform Bar = settingsPanel.transform.Find("Bar");
+        Transform Bar = _settingsPanel.transform.Find("Bar");
         Toggle ToggleLanguage = Bar.Find("Content/Language").GetComponent<Toggle>();
-        Toggle ToggleControl = Bar.Find("Content/Control").GetComponent<Toggle>();
+        Toggle ToggleControls = Bar.Find("Content/Controls").GetComponent<Toggle>();
         Toggle ToggleAudio = Bar.Find("Content/Audio").GetComponent<Toggle>();
-        Toggle ToggleGraphic = Bar.Find("Content/Graphic").GetComponent<Toggle>();
+        Toggle ToggleGraphics = Bar.Find("Content/Graphics").GetComponent<Toggle>();
 
-        ToggleLanguage.onValueChanged.AddListener((isOn) => { if (isOn) SwitchSettingsPage(LanguagePanel); });
-        ToggleControl.onValueChanged.AddListener((isOn) => { if (isOn) SwitchSettingsPage(ControlPanel); });
-        ToggleAudio.onValueChanged.AddListener((isOn) => { if (isOn) SwitchSettingsPage(AudioPanel); });
-        ToggleGraphic.onValueChanged.AddListener((isOn) => { if (isOn) SwitchSettingsPage(GraphicPanel); });
+        ToggleLanguage.onValueChanged.AddListener((isOn) => { if (isOn) SwitchSettingsPage(_languagePanel); });
+        ToggleControls.onValueChanged.AddListener((isOn) => { if (isOn) SwitchSettingsPage(_controlsPanel); });
+        ToggleAudio.onValueChanged.AddListener((isOn) => { if (isOn) SwitchSettingsPage(_audioPanel); });
+        ToggleGraphics.onValueChanged.AddListener((isOn) => { if (isOn) SwitchSettingsPage(_graphicsPanel); });
 
         // 默认初始化到第一页
         ToggleLanguage.isOn = true;
-        SwitchSettingsPage(LanguagePanel);
+        SwitchSettingsPage(_languagePanel);
 
         // 4. 绑定具体设置项 (语言下拉菜单)
-        languageDropdown = LanguagePanel.transform.Find("Content/Language/Wrapper/Dropdown").GetComponent<TMP_Dropdown>();
+        languageDropdown = _languagePanel.transform.Find("Content/Language/Wrapper/Dropdown").GetComponent<TMP_Dropdown>();
         languageDropdown.onValueChanged.AddListener(OnLanguageChanged);
 
         // 游戏启动时，默认隐藏整个设置菜单
@@ -87,10 +87,10 @@ public class SettingsManager : MonoBehaviour
 
     private void SwitchSettingsPage(GameObject page)
     {
-        LanguagePanel.SetActive(false);
-        ControlPanel.SetActive(false);
-        AudioPanel.SetActive(false);
-        GraphicPanel.SetActive(false);
+        _languagePanel.SetActive(false);
+        _controlsPanel.SetActive(false);
+        _audioPanel.SetActive(false);
+        _graphicsPanel.SetActive(false);
         
         page.SetActive(true);
     }
