@@ -19,6 +19,7 @@ public class GraphicsUI : MonoBehaviour
     private readonly int[] _fpsOptions = new int[] { -1, 360, 240, 165, 144, 120, 90, 75, 60, 30 };
 
     private bool _isInitializing = false;
+    private bool _isLanguageDirty = false; // 下拉表是否过期
 
     private void Awake()
     {
@@ -49,6 +50,22 @@ public class GraphicsUI : MonoBehaviour
         InitVSyncToggle(); // 垂直同步 开关
 
         _isInitializing = false;
+        LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged; // 在Start里面订阅，保证能一直跟踪语言切换事件
+    }
+    private void OnDestroy() => LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged; // 组件销毁时取消订阅
+    private void OnLocaleChanged(Locale newLocale) => _isLanguageDirty = true; // 标记脏，需刷新
+    private void OnEnable()
+    {
+        // 当点击Graphics按钮时才会考虑更新UI，从而节省性能
+        if (_isLanguageDirty && _fullscreenDropdown != null)
+        {
+            _isInitializing = true;
+            InitFullscreenDropdown();
+            InitFPSDropdown();
+            _isInitializing = false;
+            _isLanguageDirty = false;
+            Debug.Log("[GraphicsUI] 发现脏标记，已懒加载重绘 UI！");
+        }
     }
     // ================= 窗口模式 =================
     private void InitFullscreenDropdown()
@@ -71,7 +88,7 @@ public class GraphicsUI : MonoBehaviour
         _resolutionDropdown.interactable = (_fullscreenDropdown.value != 1);
         _fullscreenDropdown.onValueChanged.AddListener(OnFullscreenChanged);
     }
-    
+
     private void OnFullscreenChanged(int dropdownIndex)
     {
         if (_isInitializing) return;
@@ -84,6 +101,7 @@ public class GraphicsUI : MonoBehaviour
         }
         GraphicsManager.Instance.SetAndSaveFullScreenMode(mode);
         _resolutionDropdown.interactable = (dropdownIndex != 1);
+        Debug.Log("OnFullscreenChanged");
     }
     // ================= 分辨率 =================
     private void InitResolutionDropdown()
@@ -128,13 +146,13 @@ public class GraphicsUI : MonoBehaviour
         _fpsDropdown.ClearOptions();
 
         string strUnlimited = LocalizationSettings.StringDatabase.GetLocalizedString(_tableName, "GraphicsPanel_FullScreen_Dropdown_FPS_Unlimited");
-        if (string.IsNullOrEmpty(strUnlimited)) 
+        if (string.IsNullOrEmpty(strUnlimited))
         {
             strUnlimited = "无限制"; // 兜底
             Debug.LogWarning($"[GraphicsUI] 找不到本地化键值 'GraphicsPanel_FullScreen_Dropdown_FPS_Unlimited' ！请检查 Localization Table。");
         }
         string fpsFormat = LocalizationSettings.StringDatabase.GetLocalizedString(_tableName, "GraphicsPanel_FullScreen_Dropdown_FPS_0");
-        if (string.IsNullOrEmpty(fpsFormat)) 
+        if (string.IsNullOrEmpty(fpsFormat))
         {
             fpsFormat = "{0} FPS";  // 兜底
             Debug.LogWarning($"[GraphicsUI] 找不到本地化键值 'GraphicsPanel_FullScreen_Dropdown_FPS_0' ！请检查 Localization Table。");
@@ -184,4 +202,5 @@ public class GraphicsUI : MonoBehaviour
         if (_isInitializing) return;
         GraphicsManager.Instance.SetAndSaveVSync(isOn);
     }
+
 }
