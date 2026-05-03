@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 
 // 命名空间对齐你的根目录
-namespace Manager.SaveManager
+namespace Manager.UserDataManager
 {
     [Serializable]
     public class ProfileData

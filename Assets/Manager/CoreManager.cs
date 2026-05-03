@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using Steamworks;
-using Manager.SaveManager;
+using Manager.UserDataManager;
 
 namespace Manager
 {
@@ -30,13 +30,13 @@ namespace Manager
             // 确保 SteamManager 已经初始化
             yield return new WaitUntil(() => SteamManager.Initialized);
             ulong steamId = Steamworks.SteamUser.GetSteamID().m_SteamID;
-            ProfileLoadStatus status = ProfileManager.Instance.InitializeAccount(steamId, out string errorPath);
+            ProfileLoadStatus status = ProfileHandler.Instance.InitializeAccount(steamId, out string errorPath);
             // 可以改成!=测试
             if (status == ProfileLoadStatus.Corrupted)
             {
                 corruptedDialogUI.ShowDialog(
                     errorPath,
-                    () => ProfileManager.Instance.ForceCreateNewProfile(steamId),
+                    () => ProfileHandler.Instance.ForceCreateNewProfile(steamId),
                     () => Application.Quit()    
                 );
             }

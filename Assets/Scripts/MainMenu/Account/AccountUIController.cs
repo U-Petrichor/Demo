@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
 using System.Linq; 
-using Manager.SaveManager;
+using Manager.UserDataManager;
 
 public class AccountUIController : MonoBehaviour
 {
@@ -25,17 +25,17 @@ public class AccountUIController : MonoBehaviour
     private void OnEnable()
     {
         // 订阅初始化事件：一旦底层数据准备完毕，自动刷新 UI
-        if (ProfileManager.Instance != null)
+        if (ProfileHandler.Instance != null)
         {
-            ProfileManager.Instance.OnProfileDataInitialized += RefreshAccountDisplay;
+            ProfileHandler.Instance.OnProfileDataInitialized += RefreshAccountDisplay;
         }
     }
 
     private void OnDisable()
     {
-        if (ProfileManager.Instance != null)
+        if (ProfileHandler.Instance != null)
         {
-            ProfileManager.Instance.OnProfileDataInitialized -= RefreshAccountDisplay;
+            ProfileHandler.Instance.OnProfileDataInitialized -= RefreshAccountDisplay;
         }
     }
 
@@ -44,7 +44,7 @@ public class AccountUIController : MonoBehaviour
         CloseSlotSelectionPanel();
 
         // 首次启动时，如果数据还没异步加载完，显示等待状态
-        if (ProfileManager.Instance == null || ProfileManager.Instance.CurrentProfile == null)
+        if (ProfileHandler.Instance == null || ProfileHandler.Instance.CurrentProfile == null)
         {
             userNameText.text = "正在同步 Steam...";
             slotNameText.text = "---";
@@ -73,18 +73,18 @@ public class AccountUIController : MonoBehaviour
 
     public void RefreshAccountDisplay()
     {
-        if (ProfileManager.Instance != null && ProfileManager.Instance.CurrentProfile != null)
+        if (ProfileHandler.Instance != null && ProfileHandler.Instance.CurrentProfile != null)
         {
-            userNameText.text = ProfileManager.Instance.CurrentProfile.SteamId.ToString();
+            userNameText.text = ProfileHandler.Instance.CurrentProfile.SteamId.ToString();
         }
         else
         {
             userNameText.text = "未知账号";
         }
 
-        if (GlobalSaveManager.Instance != null && GlobalSaveManager.Instance.CurrentGlobalData != null)
+        if (GlobalSaveHandler.Instance != null && GlobalSaveHandler.Instance.CurrentGlobalData != null)
         {
-            slotNameText.text = GlobalSaveManager.Instance.CurrentGlobalData.SlotId;
+            slotNameText.text = GlobalSaveHandler.Instance.CurrentGlobalData.SlotId;
         }
         else
         {
@@ -105,7 +105,7 @@ public class AccountUIController : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        List<SlotSummary> summaries = ProfileManager.Instance.GetAllSlotSummaries();
+        List<SlotSummary> summaries = ProfileHandler.Instance.GetAllSlotSummaries();
 
         foreach (var summary in summaries)
         {
@@ -129,7 +129,7 @@ public class AccountUIController : MonoBehaviour
 
     private void OnSlotSelected(string clickedSlotId, int clickedSlotIndex)
     {
-        bool success = GlobalSaveManager.Instance.LoadSlot(clickedSlotId, clickedSlotIndex);
+        bool success = GlobalSaveHandler.Instance.LoadSlot(clickedSlotId, clickedSlotIndex);
 
         if (success)
         {
@@ -144,7 +144,7 @@ public class AccountUIController : MonoBehaviour
 
     private void OnNewSlotClicked()
     {
-        List<SlotSummary> summaries = ProfileManager.Instance.GetAllSlotSummaries();
+        List<SlotSummary> summaries = ProfileHandler.Instance.GetAllSlotSummaries();
         
         int newIndex = 0;
         if (summaries != null && summaries.Count > 0)
@@ -154,7 +154,7 @@ public class AccountUIController : MonoBehaviour
 
         string newSlotId = $"SaveSlot_{newIndex}";
 
-        bool success = GlobalSaveManager.Instance.LoadSlot(newSlotId, newIndex);
+        bool success = GlobalSaveHandler.Instance.LoadSlot(newSlotId, newIndex);
 
         if (success)
         {

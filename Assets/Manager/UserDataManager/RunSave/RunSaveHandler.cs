@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Manager.SaveManager
+namespace Manager.UserDataManager
 {
-    public class RunSaveManager : MonoBehaviour
+    public class RunSaveHandler : MonoBehaviour
     {
-        public static RunSaveManager Instance { get; private set; }
+        public static RunSaveHandler Instance { get; private set; }
 
         private void Awake()
         {
@@ -16,7 +16,7 @@ namespace Manager.SaveManager
 
         public void InitializeReadyState()
         {
-            Debug.Log("[RunSaveManager] 处于待命状态。");
+            Debug.Log("[RunSaveHandler] 处于待命状态。");
         }
 
         // 由主菜单“进入地牢”按钮触发

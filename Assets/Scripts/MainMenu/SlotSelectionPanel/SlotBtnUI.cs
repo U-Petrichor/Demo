@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
-using Manager.SaveManager;
+using Manager.UserDataManager;
 
 [RequireComponent(typeof(Button))]
 public class SlotItemUI : MonoBehaviour

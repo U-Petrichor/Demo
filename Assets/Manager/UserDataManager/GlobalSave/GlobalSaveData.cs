@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Manager.SaveManager
+namespace Manager.UserDataManager
 {
     [System.Serializable]
     public class GlobalSaveData

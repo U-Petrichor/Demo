@@ -5,11 +5,11 @@ using System.Linq;
 using UnityEngine;
 using Newtonsoft.Json;
 
-namespace Manager.SaveManager
+namespace Manager.UserDataManager
 {
-    public class GlobalSaveManager : MonoBehaviour
+    public class GlobalSaveHandler : MonoBehaviour
     {
-        public static GlobalSaveManager Instance { get; private set; }
+        public static GlobalSaveHandler Instance { get; private set; }
 
         // 当前正在游玩的第二层全局数据（内存级）
         public GlobalSaveData CurrentGlobalData { get; private set; }
@@ -17,7 +17,7 @@ namespace Manager.SaveManager
         // 运行时缓存：用于实验室和单局游戏高频查询物品是否解锁 (O(1) 复杂度)
         private HashSet<string> _runtimeCollectedItemsCache = new HashSet<string>();
 
-        // 当前游玩槽位的物理索引 (对接第一层 ProfileManager 需要)
+        // 当前游玩槽位的物理索引 (对接第一层 ProfileHandler 需要)
         private int _currentSlotIndex;
 
         // 存档存放的根目录
@@ -65,14 +65,14 @@ namespace Manager.SaveManager
             if (TryLoadFromFile(filePath)) return true;
 
             // 3. 读取备份文件
-            Debug.LogWarning($"[GlobalSaveManager] {slotId} 主文件损坏，尝试读取备份...");
+            Debug.LogWarning($"[GlobalSaveHandler] {slotId} 主文件损坏，尝试读取备份...");
             if (File.Exists(backupFilePath) && TryLoadFromFile(backupFilePath))
             {
                 File.Copy(backupFilePath, filePath, true);
                 return true;
             }
 
-            Debug.LogError($"[GlobalSaveManager] {slotId} 存档彻底损坏！");
+            Debug.LogError($"[GlobalSaveHandler] {slotId} 存档彻底损坏！");
             return false;
         }
 
@@ -89,7 +89,7 @@ namespace Manager.SaveManager
             }
             catch (Exception e)
             {
-                Debug.LogError($"[GlobalSaveManager] 读取失败: {e.Message}");
+                Debug.LogError($"[GlobalSaveHandler] 读取失败: {e.Message}");
                 return false;
             }
         }
@@ -140,7 +140,7 @@ namespace Manager.SaveManager
             }
             catch (Exception e)
             {
-                Debug.LogError($"[GlobalSaveManager] 写入本地失败: {e.Message}");
+                Debug.LogError($"[GlobalSaveHandler] 写入本地失败: {e.Message}");
             }
         }
 
@@ -160,7 +160,7 @@ namespace Manager.SaveManager
             summary.CollectionPercent = TOTAL_GAME_ITEMS > 0 ? (float)CurrentGlobalData.CollectedItemIDs.Count / TOTAL_GAME_ITEMS : 0f;
 
             // 调用你之前写好的第一层更新接口
-            ProfileManager.Instance.UpdateOrAddSlotSummary(summary);
+            ProfileHandler.Instance.UpdateOrAddSlotSummary(summary);
         }
 
         // ==========================================

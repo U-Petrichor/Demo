@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using Newtonsoft.Json;
 
-namespace Manager.SaveManager
+namespace Manager.UserDataManager
 {
     public enum ProfileLoadStatus
     {
@@ -14,9 +14,9 @@ namespace Manager.SaveManager
         Corrupted             // 主文件和备份均损坏，需要玩家介入
     }
 
-    public class ProfileManager : MonoBehaviour
+    public class ProfileHandler : MonoBehaviour
     {
-        public static ProfileManager Instance { get; private set; }
+        public static ProfileHandler Instance { get; private set; }
         public ProfileData CurrentProfile { get; private set; }
         
         public string ProfilesDirectoryPath { get; private set; }
@@ -59,11 +59,11 @@ namespace Manager.SaveManager
             }
 
             // 3. 主文件失败，尝试读取备份文件
-            Debug.LogWarning("[ProfileManager] 主存档损坏，尝试从备份恢复...");
+            Debug.LogWarning("[ProfileHandler] 主存档损坏，尝试从备份恢复...");
             if (File.Exists(backupFilePath) && TryLoadFromFile(backupFilePath))
             {
                 File.Copy(backupFilePath, filePath, true);
-                Debug.Log("[ProfileManager] 存档已成功从备份恢复。");
+                Debug.Log("[ProfileHandler] 存档已成功从备份恢复。");
                 OnProfileDataInitialized?.Invoke(); // 触发事件
                 return ProfileLoadStatus.RecoveredFromBackup;
             }
@@ -91,7 +91,7 @@ namespace Manager.SaveManager
             }
             catch (Exception e)
             {
-                Debug.LogError($"[ProfileManager] 文件解析失败 ({path}): {e.Message}");
+                Debug.LogError($"[ProfileHandler] 文件解析失败 ({path}): {e.Message}");
                 return false;
             }
         }
@@ -132,7 +132,7 @@ namespace Manager.SaveManager
             }
             catch (Exception e)
             {
-                Debug.LogError($"[ProfileManager] 保存存档失败: {e.Message}");
+                Debug.LogError($"[ProfileHandler] 保存存档失败: {e.Message}");
             }
         }
 
